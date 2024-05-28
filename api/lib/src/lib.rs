@@ -13,7 +13,7 @@ pub use zoho::invoice::{Invoice, LineItem};
 mod routes;
 pub use routes::{
     check::{database, health},
-    handle_post,
+    webhook,
 };
 
 #[derive(Clone)]
@@ -26,6 +26,6 @@ pub fn build_router(pool: PgPool) -> Router {
     Router::new()
         .route("/health", get(health))
         .route("/database", get(database))
-        .route("/post", post(handle_post))
+        .route("/post", post(webhook))
         .with_state(state)
 }

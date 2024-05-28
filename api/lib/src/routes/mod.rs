@@ -11,7 +11,7 @@ pub struct Payload {
     invoice: Invoice,
 }
 
-pub async fn handle_post(Json(invoice): Json<Payload>) -> Result<impl IntoResponse> {
+pub async fn webhook(Json(invoice): Json<Payload>) -> Result<impl IntoResponse> {
     // Handle the received JSON payload
     println!();
     println!("{:#?}", invoice);
