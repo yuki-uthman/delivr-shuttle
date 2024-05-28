@@ -1,4 +1,11 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::{get, post}, Json, Router};
+use axum::{
+    extract::State,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sqlx::PgPool;
 
@@ -25,10 +32,39 @@ async fn database(State(state): State<AppState>) -> Result<impl IntoResponse> {
     }
 }
 
-async fn handle_post(Json(payload): Json<Value>) -> Result<impl IntoResponse> {
+#[derive(Deserialize, Serialize, Debug)]
+struct Payload {
+    invoice: Invoice,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+struct Invoice {
+    created_by_name: String,
+    created_date: String,
+    customer_id: String,
+    customer_name: String,
+    invoice_id: String,
+    invoice_number: String,
+    line_items: Vec<LineItem>,
+    date: String,
+    status: String,
+    total: f64,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+struct LineItem {
+    item_id: String,
+    item_total: f64,
+    name: String,
+    purchase_rate: f64,
+    quantity: i32,
+    rate: f64,
+}
+
+async fn handle_post(Json(invoice): Json<Payload>) -> Result<impl IntoResponse> {
     // Handle the received JSON payload
     println!();
-    println!("{:#?}", payload);
+    println!("{:#?}", invoice);
     println!();
 
     Ok((StatusCode::OK, "Success!"))
