@@ -1,4 +1,5 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::{get, post}, Json, Router};
+use serde_json::Value;
 use sqlx::PgPool;
 
 mod error;
@@ -24,10 +25,20 @@ async fn database(State(state): State<AppState>) -> Result<impl IntoResponse> {
     }
 }
 
+async fn handle_post(Json(payload): Json<Value>) -> Result<impl IntoResponse> {
+    // Handle the received JSON payload
+    println!();
+    println!("{:#?}", payload);
+    println!();
+
+    Ok((StatusCode::OK, "Success!"))
+}
+
 pub fn build_router(pool: PgPool) -> Router {
     let state = AppState { pool };
     Router::new()
         .route("/health", get(health))
         .route("/database", get(database))
+        .route("/post", post(handle_post))
         .with_state(state)
 }
