@@ -1,5 +1,5 @@
 [package]
-name = "shuttle-axum-template"
+name = "delivr"
 version = "0.1.0"
 edition = "2021"
 
