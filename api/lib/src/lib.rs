@@ -11,7 +11,10 @@ mod zoho;
 pub use zoho::invoice::{Invoice, LineItem};
 
 mod routes;
-pub use routes::{database, handle_post, health};
+pub use routes::{
+    check::{database, health},
+    handle_post,
+};
 
 #[derive(Clone)]
 pub struct AppState {
