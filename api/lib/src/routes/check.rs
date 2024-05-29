@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::State, http::StatusCode, response::IntoResponse};
 
 use crate::{AppState, Error, Result};
 
@@ -15,4 +15,3 @@ pub async fn database(State(state): State<AppState>) -> Result<impl IntoResponse
         Err(e) => Err(Error::from(e)),
     }
 }
-
