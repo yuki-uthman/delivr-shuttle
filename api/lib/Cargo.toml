@@ -19,6 +19,7 @@ sqlx = { version = "0.7", default-features = false, features = [
     "json",
 ] }
 derive_more = { version = "0.99.17", features = ["from"] }
+chrono = { version = "0.4.24", features = ["serde"] }
 
 [dev-dependencies]
 tokio = "1.28.2"
