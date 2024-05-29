@@ -19,7 +19,7 @@ pub async fn webhook(
 
     // insert the invoice into the database
     sqlx::query(
-        "INSERT INTO invoice (created_by_name,
+        "INSERT INTO invoices (created_by_name,
                                 created_date,
                                 customer_id,
                                 customer_name,
@@ -46,7 +46,7 @@ pub async fn webhook(
     let line_items = invoice.line_items;
     // check if line_item.item_id is already in Item table
     for line_item in line_items {
-        let res = sqlx::query("SELECT item_id FROM item WHERE item_id = $1")
+        let res = sqlx::query("SELECT item_id FROM items WHERE item_id = $1")
             .bind(&line_item.item_id)
             .fetch_optional(&state.pool)
             .await
@@ -55,7 +55,7 @@ pub async fn webhook(
         if res.is_none() {
             // insert the item into the item table
             sqlx::query(
-                "INSERT INTO item (item_id, name, purchase_rate, rate)
+                "INSERT INTO items (item_id, name, purchase_rate, rate)
                     VALUES ($1, $2, $3, $4)",
             )
             .bind(&line_item.item_id)
@@ -69,7 +69,7 @@ pub async fn webhook(
 
         // insert line_item into the line_item table
         sqlx::query(
-            "INSERT INTO LineItem (line_item_id, invoice_id, item_id, item_total, quantity, rate)
+            "INSERT INTO line_items (line_item_id, invoice_id, item_id, item_total, quantity, rate)
                 VALUES ($1, $2, $3, $4, $5, $6)",
         )
         .bind(&line_item.line_item_id)
