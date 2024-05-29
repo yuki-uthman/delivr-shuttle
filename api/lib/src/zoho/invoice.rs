@@ -17,6 +17,7 @@ pub struct Invoice {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct LineItem {
+    pub line_item_id: String,
     pub item_id: String,
     pub item_total: f64,
     pub name: String,
