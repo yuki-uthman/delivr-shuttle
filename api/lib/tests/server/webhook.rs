@@ -41,5 +41,15 @@ async fn insert_invoice() -> Result<()> {
 
     assert_eq!(response.status(), 200);
 
+    let res = client
+        .get(format!("http://{}/invoices?date=2024-05-27", app.address()))
+        .header("Content-Type", "application/json")
+        .body(json)
+        .send()
+        .await?;
+
+    println!("{:#?}", res.json::<serde_json::Value>().await?);
+    todo!();
+
     Ok(())
 }
