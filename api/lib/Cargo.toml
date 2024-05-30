@@ -17,7 +17,9 @@ sqlx = { version = "0.7", default-features = false, features = [
     "uuid",
     "chrono",
     "json",
+    "bigdecimal",
 ] }
+bigdecimal = { version = "0.3.1", features = ["serde"] }
 derive_more = { version = "0.99.17", features = ["from"] }
 chrono = { version = "0.4.24", features = ["serde"] }
 

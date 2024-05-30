@@ -13,11 +13,13 @@ pub async fn webhook(
     State(state): State<AppState>,
     Json(payload): Json<Payload>,
 ) -> Result<impl IntoResponse> {
-
     let invoice = payload.invoice;
     println!("{:#?}", invoice);
 
-    // insert the invoice into the database
+    // Start a new transaction
+    let mut tx = state.pool.begin().await?;
+
+    // Insert the invoice into the database
     sqlx::query(
         "INSERT INTO invoices (created_by_name,
                                 created_date,
@@ -39,16 +41,15 @@ pub async fn webhook(
     .bind(invoice.invoice_number)
     .bind(invoice.status)
     .bind(invoice.total)
-    .execute(&state.pool)
-    .await
-    .map_err(Error::from)?;
+    .execute(&mut *tx)
+    .await?;
 
     let line_items = invoice.line_items;
     // check if line_item.item_id is already in Item table
     for line_item in line_items {
         let res = sqlx::query("SELECT item_id FROM items WHERE item_id = $1")
             .bind(&line_item.item_id)
-            .fetch_optional(&state.pool)
+            .fetch_optional(&mut *tx)
             .await
             .map_err(Error::from)?;
 
@@ -62,9 +63,8 @@ pub async fn webhook(
             .bind(line_item.name)
             .bind(line_item.purchase_rate)
             .bind(line_item.rate)
-            .execute(&state.pool)
-            .await
-            .map_err(Error::from)?;
+            .execute(&mut *tx)
+            .await?;
         }
 
         // insert line_item into the line_item table
@@ -78,11 +78,12 @@ pub async fn webhook(
         .bind(line_item.item_total)
         .bind(line_item.quantity)
         .bind(line_item.rate)
-        .execute(&state.pool)
-        .await
-        .map_err(Error::from)?;
-
+        .execute(&mut *tx)
+        .await?;
     }
+
+    // Commit the transaction
+    tx.commit().await?;
 
     Ok((StatusCode::OK, "Success!"))
 }

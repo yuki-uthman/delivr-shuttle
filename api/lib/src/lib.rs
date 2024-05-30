@@ -15,6 +15,7 @@ mod routes;
 pub use routes::{
     check::{database, health},
     webhook,
+    invoices,
 };
 
 #[derive(Clone)]
@@ -28,5 +29,6 @@ pub fn build_router(pool: PgPool) -> Router {
         .route("/health", get(health))
         .route("/database", get(database))
         .route("/post", post(webhook))
+        .route("/invoices", get(invoices))
         .with_state(state)
 }
